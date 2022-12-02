@@ -104,7 +104,7 @@ def registration_request(request):
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
     if request.method == "GET":
-        url = "your-cloud-function-domain/dealerships/dealer-get"
+        url = "https://us-east.functions.appdomain.cloud/api/v1/web/ptqmtl117_Django/dealership-package/get-dealership"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
         # Concat all dealer's short name
@@ -117,11 +117,11 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     if request.method == "GET":
         context = {}
-        url = "https://e29b86ca.eu-gb.apigw.appdomain.cloud/api/review/"
+        url = "https://us-east.functions.cloud.ibm.com/api/v1/namespaces/ptqmtl117_Django/actions/dealership-package/get-review"
         reviews = get_dealer_reviews_from_cf(url, dealer_id)
         context["reviews"] = reviews
         dealer = get_dealer_from_cf_by_id(
-            "https://e29b86ca.eu-gb.apigw.appdomain.cloud/api/dealership", dealer_id)
+            "https://us-east.functions.appdomain.cloud/api/v1/web/ptqmtl117_Django/dealership-package/get-dealership", dealer_id)
         context["dealer"] = dealer
         return render(request, 'djangoapp/dealer_details.html', context)
 
@@ -130,7 +130,7 @@ def get_dealer_details(request, dealer_id):
 def add_review(request, dealer_id):
     context = {}
     if request.method == "GET":
-        url = "https://e29b86ca.eu-gb.apigw.appdomain.cloud/api/dealership"
+        url = "https://us-east.functions.appdomain.cloud/api/v1/web/ptqmtl117_Django/dealership-package/get-dealership"
         dealer = get_dealer_from_cf_by_id(url, dealer_id)
         cars = CarModel.objects.filter(dealer_id=dealer_id)
         context["cars"] = cars
@@ -138,7 +138,7 @@ def add_review(request, dealer_id):
         return render(request, 'djangoapp/add_review.html', context)
 
     if request.method == "POST":
-        url = "https://e29b86ca.eu-gb.apigw.appdomain.cloud/api/review/"      
+        url = "https://us-east.functions.cloud.ibm.com/api/v1/namespaces/ptqmtl117_Django/actions/dealership-package/get-review"      
         if 'purchasecheck' in request.POST:
             was_purchased = True
         else:
