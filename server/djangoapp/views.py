@@ -131,7 +131,7 @@ def get_dealer_details(request, id):
 def add_review(request, id):
     context = {}
     dealer_url = "https://us-east.functions.appdomain.cloud/api/v1/web/ptqmtl117_Django/dealership-package/get-dealership"
-    dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
+    dealer = get_dealer_from_cf_by_id(dealer_url, id=id)
     context["dealer"] = dealer
     if request.method == 'GET':
         # Get cars for the dealer
