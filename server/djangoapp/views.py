@@ -135,7 +135,7 @@ def add_review(request, dealer_id):
         return render(request, 'djangoapp/add_review.html', context)
 
     if request.method == "POST":
-        url = "https://us-east.functions.cloud.ibm.com/api/v1/namespaces/ptqmtl117_Django/actions/dealership-package/get-review"      
+        url = "https://us-east.functions.appdomain.cloud/api/v1/web/ptqmtl117_Django/dealership-package/post-review"      
         if 'purchasecheck' in request.POST:
             was_purchased = True
         else:
