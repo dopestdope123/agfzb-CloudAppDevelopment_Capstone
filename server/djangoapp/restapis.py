@@ -28,15 +28,18 @@ def get_request(url, **kwargs):
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
-def post_request(url, payload, **kwargs):
-    print(kwargs)
-    print("POST to {} ".format(url))
-    print(payload)
-    response = requests.post(url, params=kwargs, json=payload)
-    status_code = response.status_code
-    print("With status {} ".format(status_code))
-    json_data = json.loads(response.text)
-    return json_data
+def post_request(url, json_payload, **kwargs):
+    print(json_payload)
+    print("POST from {} ".format(url))
+    try:
+        response = requests.post(url, params=kwargs, json=json_payload)
+        status_code = response.status_code
+        print("With status {} ".format(status_code))
+        json_data = json.loads(response.text)
+        print(json_data)
+        return json_data
+    except:
+        print("Network exception occurred")
 
 # Create a get_dealers_from_cf method to get dealers from a cloud function
 # def get_dealers_from_cf(url, **kwargs):
@@ -136,7 +139,7 @@ def get_dealer_from_cf_by_id(url, id):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
 
-def analyze_review_sentiments(dealer_review):
+def analyze_review_sentiments(text):
     API_KEY = "f7ixX6Yc4f5P0Ryb4MCz0IZ9hDSAS8p85ROwlet89kUa"
     NLU_URL = 'https://api.us-east.natural-language-understanding.watson.cloud.ibm.com/instances/8f0ac61a-79b4-42cb-a2f5-c7b9f3d37780'
     authenticator = IAMAuthenticator(API_KEY)
@@ -144,8 +147,7 @@ def analyze_review_sentiments(dealer_review):
     version='2022-04-07',
     authenticator=authenticator)
     natural_language_understanding.set_service_url(NLU_URL)
-    response = natural_language_understanding.analyze(text=dealer_review, features=Features(
-        sentiment=SentimentOptions(targets=[dealer_review]))).get_result()
+    response = natural_language_understanding.analyze( text=text,features=Features(sentiment=SentimentOptions(targets=[text]))).get_result()
     label = json.dumps(response, indent=2)
     label = response['sentiment']['document']['label']
     return(label)

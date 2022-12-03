@@ -131,11 +131,14 @@ def get_dealer_details(request, id):
 def add_review(request, id):
     context = {}
     dealer_url = "https://us-east.functions.appdomain.cloud/api/v1/web/ptqmtl117_Django/dealership-package/get-dealership"
-    dealer = get_dealer_from_cf_by_id(dealer_url, id=id)
+    dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
     context["dealer"] = dealer
     if request.method == 'GET':
-        cars = CarModel.objects.all()
+        # Get cars for the dealer
+        cars = CarModel.objects.filter(id=id)
+        print(cars)
         context["cars"] = cars
+        
         return render(request, 'djangoapp/add_review.html', context)
     elif request.method == 'POST':
         if request.user.is_authenticated:
@@ -148,26 +151,18 @@ def add_review(request, id):
             payload["name"] = username
             payload["dealership"] = id
             payload["id"] = id
-            if "review" in request.POST:
-                payload["review"] = request.POST["review"]
-            else:
-                payload["review"] = False
+            payload["review"] = request.POST["content"]
             payload["purchase"] = False
             if "purchasecheck" in request.POST:
                 if request.POST["purchasecheck"] == 'on':
                     payload["purchase"] = True
-            #payload["purchase_date"] = request.POST["purchase_date"]
-            if "purchase_date" in request.POST:
-                payload["purchase_date"] = request.POST["purchase_date"]
-            else:
-                payload["review"] = False
+            payload["purchase_date"] = request.POST["purchasedate"]
             payload["car_make"] = car.make.name
             payload["car_model"] = car.name
             payload["car_year"] = int(car.year.strftime("%Y"))
+
             new_payload = {}
             new_payload["review"] = payload
-            review_post_url = "https://us-east.functions.appdomain.cloud/api/v1/web/ptqmtl117_Django/dealership-package/post-review"
+            review_post_url = "hhttps://us-east.functions.appdomain.cloud/api/v1/web/ptqmtl117_Django/dealership-package/post-review"
             post_request(review_post_url, new_payload, id=id)
         return redirect("djangoapp:dealer_details", id=id)
-
-
